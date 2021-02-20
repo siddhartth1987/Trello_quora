@@ -51,5 +51,16 @@ public class AuthenticationService {
 
         }
     }
+
+    public UserAuthEntity authenticate(String token) throws AuthenticationFailedException {
+        UserAuthEntity auth = userDao.findByAuthToken(token);
+        if (auth == null){
+            throw new AuthenticationFailedException("ATHR-001", "User has not signed in");
+        } else if(auth.getLogoutAt() != null){
+            throw new AuthenticationFailedException("ATHR-002", "User is signed out");
+        }
+
+        return auth;
     }
+}
 
