@@ -28,7 +28,7 @@ public class SignoutBusinessService {
         }
 
         userAuthByAccessToken.setLogoutAt(ZonedDateTime.now());
-        userDao.updateUserAuth(userAuthByAccessToken);
+        userDao.updateUser(userAuthByAccessToken);
         return userAuthByAccessToken;
     }
 }
