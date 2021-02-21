@@ -44,8 +44,6 @@ public class AuthenticationService {
 
             userDao.createAuthToken(userAuthToken);
 
-            userDao.updateUser(userEntity);
-
             return userAuthToken;
         } else {
             throw new AuthenticationFailedException("ATH-002", "Password failed");  // Throwing user defined exception if password doesn't match
@@ -55,7 +53,7 @@ public class AuthenticationService {
 
     // Validate accessToken of inbound request
     public UserEntity validateAuthToken(String accessToken) throws AuthorizationFailedException {
-        UserAuthEntity userAuthEntity = userDao.getUserAuthToken(accessToken);
+        UserAuthEntity userAuthEntity = userDao.getUserAuthByAccessToken(accessToken);
         ZonedDateTime currentTime = ZonedDateTime.now();
         if (userAuthEntity == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
@@ -66,8 +64,6 @@ public class AuthenticationService {
             return userAuthEntity.getUser();
         }
     }
-
-
 
     }
 

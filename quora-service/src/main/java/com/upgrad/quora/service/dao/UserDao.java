@@ -53,8 +53,8 @@ public class UserDao {
         return userAuthEntity;
     }
 
-    public void updateUser(final UserEntity updatedUserEntity) {
-        entityManager.merge(updatedUserEntity);
+    public UserAuthEntity updateUser(final UserAuthEntity userAuthEntity) {
+        return entityManager.merge(userAuthEntity);
     }
 
     public UserAuthEntity getUserAuthByAccessToken(String accessToken) {
