@@ -46,7 +46,7 @@ public class SignupBusinessService {
     @Transactional(propagation = Propagation.REQUIRED)
     public UserEntity getUser(String targetUuid, String token) throws AuthorizationFailedException, UserNotFoundException {
 
-        UserAuthEntity userAuth = userDao.getUserAuthByToken(token);
+        UserAuthEntity userAuth = userDao.getUserAuthByAccessToken(token);
         if (userAuth == null) {
             throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
         }
