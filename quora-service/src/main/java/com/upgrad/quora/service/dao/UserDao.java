@@ -21,7 +21,7 @@ public class UserDao {
 
     public UserEntity getUser(final String userUuid) {
         try {
-            return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("userUuid", userUuid).getSingleResult();
+            return entityManager.createNamedQuery("userByUuid", UserEntity.class).setParameter("uuid", userUuid).getSingleResult();
         } catch (NoResultException nre){
             return null;
         }
@@ -48,13 +48,28 @@ public class UserDao {
         }
     }
 
-    public UserAuthEntity getUserAuthByToken(String token) {
+    public UserAuthEntity createAuthToken(final UserAuthEntity userAuthEntity) {
+        entityManager.persist(userAuthEntity);
+        return userAuthEntity;
+    }
 
+    public UserAuthEntity updateUser(final UserAuthEntity userAuthEntity) {
+        return entityManager.merge(userAuthEntity);
+    }
+
+    public UserAuthEntity getUserAuthByAccessToken(String accessToken) {
         try {
-            return entityManager.createNamedQuery("userAuthByToken", UserAuthEntity.class).setParameter("token", token).getSingleResult();
-        } catch (NoResultException ex) {
+            UserAuthEntity userAuthEntity = entityManager.createNamedQuery("userAuthByAcessToken", UserAuthEntity.class)
+                    .setParameter("accessToken", accessToken)
+                    .getSingleResult();
+            return userAuthEntity;
+        } catch (NoResultException nre) {
             return null;
         }
+    }
+
+    public void deleteUser(UserEntity userEntityDelete) {
+        entityManager.remove(userEntityDelete);
     }
 
 }
