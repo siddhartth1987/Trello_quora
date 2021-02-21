@@ -4,6 +4,7 @@ import com.upgrad.quora.service.dao.UserDao;
 import com.upgrad.quora.service.entity.UserAuthEntity;
 import com.upgrad.quora.service.entity.UserEntity;
 import com.upgrad.quora.service.exception.AuthenticationFailedException;
+import com.upgrad.quora.service.exception.AuthorizationFailedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -43,8 +44,6 @@ public class AuthenticationService {
 
             userDao.createAuthToken(userAuthToken);
 
-            userDao.updateUser(userEntity);
-
             return userAuthToken;
         } else {
             throw new AuthenticationFailedException("ATH-002", "Password failed");  // Throwing user defined exception if password doesn't match
@@ -52,15 +51,19 @@ public class AuthenticationService {
         }
     }
 
-    public UserAuthEntity authenticate(String token) throws AuthenticationFailedException {
-        UserAuthEntity auth = userDao.findByAuthToken(token);
-        if (auth == null){
-            throw new AuthenticationFailedException("ATHR-001", "User has not signed in");
-        } else if(auth.getLogoutAt() != null){
-            throw new AuthenticationFailedException("ATHR-002", "User is signed out");
+    // Validate accessToken of inbound request
+    public UserEntity validateAuthToken(String accessToken) throws AuthorizationFailedException {
+        UserAuthEntity userAuthEntity = userDao.getUserAuthByAccessToken(accessToken);
+        ZonedDateTime currentTime = ZonedDateTime.now();
+        if (userAuthEntity == null) {
+            throw new AuthorizationFailedException("ATHR-001", "User has not signed in");
+        } else if (userAuthEntity.getLogoutAt() != null || userAuthEntity.getExpiresAt().isBefore(currentTime)) {
+            throw new AuthorizationFailedException("ATHR-002",
+                    "User is signed out.Sign in first to post a question");
+        } else {
+            return userAuthEntity.getUser();
         }
-
-        return auth;
     }
-}
+
+    }
 
