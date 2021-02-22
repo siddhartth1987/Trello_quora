@@ -13,7 +13,7 @@ After cloning the repo, please do a clean install  (mvn clean install -DskipTest
 Points to note: 
 
 1) Duplicate entries for the dependency 'jackson-annotations' have been removed from POM.xml
-2) SQL scripts that populate tables require modification, otherwise test cases for QuestionController and AnswerController fail.
+2) We've not made changes to the SQL scripts that populate Db tables, but they require modification/correction, otherwise test cases for QuestionController and AnswerController fail.
    
    Dates in insert script "quora_test.sql" have been set as '2018-09-17 19:41:19.593'. This results in entries with back-dated token expiration dates (expires_at). 
    The value of expires_at should ideally be, Current Date + 8 to 24 hours. 
